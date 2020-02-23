@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package account;
+
+service Account {
+    rpc Register(RegisterRequest) returns (RegisterReply){}
+}
+
+message RegisterRequest{
+    int32 telegramId = 1;
+}
+
+message RegisterReply{
+    int32 telegramId = 1;
+    string id = 2;
+    repeated string errors = 3;
+}
