@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/drypa/go-grpc-sample/account"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"log"
 	"net"
 )
@@ -26,8 +27,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	creds, err := credentials.NewServerTLSFromFile("../ssl/server.crt", "../ssl/server.key")
+	if err != nil {
+		log.Fatalf("failed to load TLS keys: %v", err)
+	}
+	opts := []grpc.ServerOption{grpc.Creds(creds)}
+
+	s := grpc.NewServer(opts...)
 	server := server{}
+
 	account.RegisterAccountServer(s, &server)
 	err = s.Serve(lis)
 	if err != nil {
